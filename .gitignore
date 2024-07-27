@@ -1,0 +1,4 @@
+.env
+venv
+sounds/command.wav
+__pycache__
