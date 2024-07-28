@@ -1,0 +1,7 @@
+SpeechRecognition==3.10.3
+librosa==0.10.2
+python-dotenv==1.0.1
+ollama==0.1.9
+pvporcupine==3.0.2
+pvrecorder==1.2.2
+PyAudio==0.2.14

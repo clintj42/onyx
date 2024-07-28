@@ -4,9 +4,13 @@ import soundfile as sf
 import subprocess
 import re
 import os
+import dotenv
+
+dotenv.load_dotenv()
 
 COMMAND_TIMEOUT = 10
 PHRASE_TIME_LIMIT = 7
+WHISPER_MODEL_PATH = os.environ['WHISPER_MODEL_PATH']
 
 def check_if_exit(transcription):
     """
@@ -48,7 +52,7 @@ def transcribe_gguf(whisper_cpp_path, model_path, file_path):
 
 def transcribe_audio(file_path):
     return transcribe_gguf(whisper_cpp_path="../whisper.cpp/",
-                            model_path="/Users/clintjohnson/personal_projects/whisper.cpp/models/ggml-base.en.bin",
+                            model_path=WHISPER_MODEL_PATH,
                             file_path=file_path)
 
 def listen_for_command():
