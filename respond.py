@@ -2,21 +2,12 @@ import ollama
 import os
 
 def respond(message):
-    responseObj = ollama.chat(model='llama3.1', messages=[
+    stream = ollama.chat(model='llama3.1', stream=True, messages=[
     {
         'role': 'user',
         'content': message,
     }])
-    response = responseObj['message']['content']
-    streaming_word_clean = response.replace(
-            '"', "").replace("\n", " ").replace("'", "").replace("*", "").replace('-', '').replace(':', '').replace('!', '')
-    os.system(f"espeak '{streaming_word_clean}'")
-    # stream = ollama.chat(model='llama3.1', stream=True, messages=[
-    # {
-    #     'role': 'user',
-    #     'content': message,
-    # }])
-    # dictate_ollama_stream(stream)
+    dictate_ollama_stream(stream)
 
 def is_complete_word(text_chunk):
     """
@@ -27,27 +18,31 @@ def is_complete_word(text_chunk):
         return True
     return False
 
+def is_complete_sentence(text):
+    return any(text.endswith(punct) for punct in ['.', '!', '?'])
+
 def dictate_ollama_stream(stream, early_stopping=False, max_spoken_tokens=250):
     response = ""
-    streaming_word = ""
+    streaming_sentence = ""
     for i, chunk in enumerate(stream):
         text_chunk = chunk['message']['content']
-        streaming_word += text_chunk
+        streaming_sentence += text_chunk
         response += text_chunk
         if i > max_spoken_tokens:
             early_stopping = True
             break
 
-        if is_complete_word(text_chunk):
-            streaming_word_clean = streaming_word.replace(
-                '"', "").replace("\n", " ").replace("'", "").replace("*", "").replace('-', '').replace(':', '').replace('!', '')
-            print(streaming_word_clean)
-            os.system(f"espeak '{streaming_word_clean}'")
-            streaming_word = ""
-    if not early_stopping:
-        streaming_word_clean = streaming_word.replace(
-            '"', "").replace("\n", " ").replace("'", "").replace("*", "").replace('-', '').replace(':', '').replace('!', '')
+        if is_complete_sentence(streaming_sentence):
+            streaming_sentence_clean = streaming_sentence.replace(
+                '"', "").replace("\n", " ").replace("'", "").replace("*", "").replace('-', '').replace(':', '')
+            print(streaming_sentence_clean)
+            os.system(f"say '{streaming_sentence_clean}'")
+            streaming_sentence = ""
 
-        os.system(f"espeak '{streaming_word_clean}'")
+    if not early_stopping and streaming_sentence:
+        streaming_sentence_clean = streaming_sentence.replace(
+            '"', "").replace("\n", " ").replace("'", "").replace("*", "").replace('-', '').replace(':', '')
+
+        os.system(f"say '{streaming_sentence_clean}'")
 
     return response
