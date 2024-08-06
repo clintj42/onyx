@@ -47,7 +47,7 @@ def main():
                 command = listen_for_command()
                 print("Command: ", command)
                 response = respond(command)
-                print("Response: ", response)
+                print('Listening ... (press Ctrl+C to exit)')
     except KeyboardInterrupt:
         print('Stopping ...')
     finally:

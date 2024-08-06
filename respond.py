@@ -2,7 +2,7 @@ import ollama
 import os
 
 def respond(message):
-    stream = ollama.chat(model='llama3.1', stream=True, messages=[
+    stream = ollama.chat(model='gemma2:2b', stream=True, messages=[
     {
         'role': 'user',
         'content': message,
@@ -36,13 +36,13 @@ def dictate_ollama_stream(stream, early_stopping=False, max_spoken_tokens=250):
             streaming_sentence_clean = streaming_sentence.replace(
                 '"', "").replace("\n", " ").replace("'", "").replace("*", "").replace('-', '').replace(':', '')
             print(streaming_sentence_clean)
-            os.system(f"say '{streaming_sentence_clean}'")
+            os.system(f"espeak '{streaming_sentence_clean}'")
             streaming_sentence = ""
 
     if not early_stopping and streaming_sentence:
         streaming_sentence_clean = streaming_sentence.replace(
             '"', "").replace("\n", " ").replace("'", "").replace("*", "").replace('-', '').replace(':', '')
 
-        os.system(f"say '{streaming_sentence_clean}'")
+        os.system(f"espeak '{streaming_sentence_clean}'")
 
     return response
