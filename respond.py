@@ -1,5 +1,15 @@
 import ollama
-import os
+import dotenv
+from TTS.api import TTS
+import sounddevice as sd
+import emoji
+
+dotenv.load_dotenv()
+
+tts = TTS(model_name="tts_models/en/ljspeech/glow-tts")
+
+def remove_emojis(text):
+    return emoji.replace_emoji(text, replace='')
 
 def respond(message):
     stream = ollama.chat(model='gemma2:2b', stream=True, messages=[
@@ -19,30 +29,23 @@ def is_complete_word(text_chunk):
     return False
 
 def is_complete_sentence(text):
-    return any(text.endswith(punct) for punct in ['.', '!', '?'])
+    return any(text.strip().endswith(punct) for punct in ['.', '!', '?'])
 
-def dictate_ollama_stream(stream, early_stopping=False, max_spoken_tokens=250):
+def dictate_ollama_stream(stream):
     response = ""
     streaming_sentence = ""
     for i, chunk in enumerate(stream):
         text_chunk = chunk['message']['content']
         streaming_sentence += text_chunk
         response += text_chunk
-        if i > max_spoken_tokens:
-            early_stopping = True
-            break
 
         if is_complete_sentence(streaming_sentence):
-            streaming_sentence_clean = streaming_sentence.replace(
-                '"', "").replace("\n", " ").replace("'", "").replace("*", "").replace('-', '').replace(':', '')
-            print(streaming_sentence_clean)
-            os.system(f"espeak '{streaming_sentence_clean}'")
+            cleaned_sentence = remove_emojis(streaming_sentence)
+            print(cleaned_sentence)
+            wav = tts.tts(text=cleaned_sentence)
+            sd.play(wav, samplerate=tts.synthesizer.output_sample_rate)
+            sd.wait() 
+
             streaming_sentence = ""
-
-    if not early_stopping and streaming_sentence:
-        streaming_sentence_clean = streaming_sentence.replace(
-            '"', "").replace("\n", " ").replace("'", "").replace("*", "").replace('-', '').replace(':', '')
-
-        os.system(f"espeak '{streaming_sentence_clean}'")
 
     return response

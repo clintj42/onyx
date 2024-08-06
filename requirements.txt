@@ -5,3 +5,6 @@ ollama==0.1.9
 pvporcupine==3.0.2
 pvrecorder==1.2.2
 PyAudio==0.2.14
+TTS==0.22.0
+sounddevice==0.4.7
+emoji==2.12.1
