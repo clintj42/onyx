@@ -11,6 +11,9 @@
 ## Setup this repo
 
 - `sudo apt-get install portaudio19-dev`
+- `sudo apt install sox`
+- Install rust `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+- `source $HOME/.cargo/env`
 - `pip install -r requirements.txt`
 - `touch .env`
   - Add the following lines to your .env file: (change the paths to match your env)

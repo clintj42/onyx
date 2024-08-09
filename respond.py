@@ -3,6 +3,7 @@ import dotenv
 from TTS.api import TTS
 import sounddevice as sd
 import emoji
+import os
 
 dotenv.load_dotenv()
 
@@ -34,17 +35,24 @@ def is_complete_sentence(text):
 def dictate_ollama_stream(stream):
     response = ""
     streaming_sentence = ""
+    is_first_chunk = True
     for i, chunk in enumerate(stream):
         text_chunk = chunk['message']['content']
         streaming_sentence += text_chunk
         response += text_chunk
 
         if is_complete_sentence(streaming_sentence):
-            cleaned_sentence = remove_emojis(streaming_sentence)
+            cleaned_sentence = streaming_sentence.replace('"', "").replace("\n", ". ").replace("*", "").replace('-', '').replace(':', '')
+            cleaned_sentence = remove_emojis(cleaned_sentence)
             print(cleaned_sentence)
-            wav = tts.tts(text=cleaned_sentence)
-            sd.play(wav, samplerate=tts.synthesizer.output_sample_rate)
-            sd.wait() 
+            if is_first_chunk:
+                is_first_chunk = False
+                os.system(f"espeak \"ee {cleaned_sentence}\"")
+            else:
+                os.system(f"espeak \"{cleaned_sentence}\"")
+            # wav = tts.tts(text=cleaned_sentence)
+            # sd.play(wav, samplerate=tts.synthesizer.output_sample_rate)
+            # sd.wait() 
 
             streaming_sentence = ""
 

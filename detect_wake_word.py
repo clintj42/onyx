@@ -31,6 +31,7 @@ def main():
 
     wav_file = None
 
+    os.system(f"espeak 'ee Ready for action sir!'")
     print('Listening ... (press Ctrl+C to exit)')
 
     try:
