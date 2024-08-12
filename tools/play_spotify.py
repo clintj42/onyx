@@ -18,16 +18,15 @@ def refine_search_query(search_query):
     }}
 
     Example Input: Listen to Billy Joel on Spotify. 
-    Output: {{ "refined_query": ""artist: Billy Joel"", "type": "artist" }}
-
+    Output: {{ "refined_query": "artist: Billy Joel", "type": "artist" }}
     Example Input: Play the Track Halo by Beyonce on Spotify. 
-    Output: {{ "refined_query": ""track:Halo artist:Beyonce"", "type": "track,artist" }}
+    Output: {{ "refined_query": "track:Halo artist:Beyonce", "type": "track,artist" }}
     Example Input: Play Under the Bridge on Spotify
-    Output: {{ "refined_query": ""track:Under the Bridge"", "type": "track" }}
+    Output: {{ "refined_query": "track:Under the Bridge", "type": "track" }}
     Example Input: Play the album Jupiter Nights by Jupiter Nights on Spotify
-    Output: {{ "refined_query": ""artist:Jupiter Nights album:Jupiter Nights"", "type": "artist,album" }}
+    Output: {{ "refined_query": "artist:Jupiter Nights album:Jupiter Nights", "type": "artist,album" }}
     Example Input: Listen to Come Together on the album Abbey Road by The Beatles on Spotify.
-    Output: {{ "refined_query": ""track:Come Together album:Abbey Road artist:The Beatles"", "type": "track,album,artist" }}
+    Output: {{ "refined_query": "track:Come Together album:Abbey Road artist:The Beatles", "type": "track,album,artist" }}
 
     Respond only with the output. Do not add any additional Notes or Explanations. Correct any obvious spelling mistakes in the input.
     Like Super trap should be corrected to Supertramp for instance.

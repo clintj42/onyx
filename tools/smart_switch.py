@@ -6,6 +6,10 @@ import traceback
 from kasa import Discover
 from dotenv import load_dotenv
 
+# To add a new smart switch:
+# 1. Run kasa devices
+# 2. Add the device name and ip address to the kasa_devices dictionary
+
 load_dotenv()
 
 kasa_username = os.getenv('KASA_USERNAME')
@@ -15,7 +19,8 @@ SPEAK_COMMAND = os.getenv('SPEAK_COMMAND')
 kasa_devices = {
     "lights": "192.168.0.102",
     "theater lights": "192.168.0.102",
-    "basement lights": "192.168.0.102"
+    "basement lights": "192.168.0.102",
+    "office lamp": "192.168.0.8",
 }
 
 def command_request(command_text):
@@ -85,5 +90,5 @@ async def smart_switch(command_text):
         os.system(f'{SPEAK_COMMAND} "I am not sure what you want me to do with {device_name}."')
 
 if __name__ == "__main__":
-    # asyncio.run(smart_switch("Turn on the office lamp."))
-    asyncio.run(smart_switch("Turn off the theater lights."))
+    asyncio.run(smart_switch("Turn on the office lamp."))
+    # asyncio.run(smart_switch("Turn off the theater lights."))

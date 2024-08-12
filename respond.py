@@ -4,9 +4,10 @@ import emoji
 import os
 import asyncio
 from detect_tool import detect_tool
-from play_spotify import play_spotify
-from shopping_list import shopping_list
-from smart_switch import smart_switch
+from tools.play_spotify import play_spotify
+from tools.shopping_list import shopping_list
+from tools.smart_switch import smart_switch
+from tools.current_datetime import current_datetime
 
 dotenv.load_dotenv()
 
@@ -17,6 +18,8 @@ def remove_emojis(text):
 
 def respond(message):
     detected_tool = detect_tool(message).strip()
+
+    print("Detected Tool: ", detected_tool)
     
     if detected_tool == 'play_spotify':
         play_spotify(message)
@@ -26,6 +29,9 @@ def respond(message):
         return
     if detected_tool == 'smart_switch':
         asyncio.run(smart_switch(message))
+        return
+    if detected_tool == 'current_datetime':
+        current_datetime(message)
         return
 
     prompt = f"""

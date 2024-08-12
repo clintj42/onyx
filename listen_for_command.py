@@ -64,7 +64,7 @@ def listen_for_command():
             try:
                 audio = recognizer.listen(
                     source, timeout=COMMAND_TIMEOUT, phrase_time_limit=PHRASE_TIME_LIMIT)
-                os.system(f"{SPEAK_COMMAND} 'Processing...'")
+                # os.system(f"{SPEAK_COMMAND} 'Processing...'")
             except sr.WaitTimeoutError:
                 continue
 
