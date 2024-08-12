@@ -3,3 +3,4 @@ venv
 sounds/command.wav
 __pycache__
 .DS_Store
+.cache

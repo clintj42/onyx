@@ -11,6 +11,7 @@ dotenv.load_dotenv()
 COMMAND_TIMEOUT = 10
 PHRASE_TIME_LIMIT = 7
 WHISPER_MODEL_PATH = os.environ['WHISPER_MODEL_PATH']
+SPEAK_COMMAND = os.environ['SPEAK_COMMAND']
 
 def transcribe_gguf(whisper_cpp_path, model_path, file_path):
     command = f"./{whisper_cpp_path}main -m {model_path} -f {file_path}"
@@ -63,7 +64,7 @@ def listen_for_command():
             try:
                 audio = recognizer.listen(
                     source, timeout=COMMAND_TIMEOUT, phrase_time_limit=PHRASE_TIME_LIMIT)
-                os.system(f"espeak 'ee Processing...'")
+                os.system(f"{SPEAK_COMMAND} 'Processing...'")
             except sr.WaitTimeoutError:
                 continue
 
@@ -81,7 +82,7 @@ def listen_for_command():
                 continue
 
             if check_if_exit(transcription):
-                os.system(f"espeak 'Program stopped. See you later!'")
+                os.system(f"{SPEAK_COMMAND} 'Program stopped. See you later!'")
                 # set message history to empty
                 # self.message_history = [self.message_history[0]]
                 return

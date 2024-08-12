@@ -11,6 +11,7 @@ dotenv.load_dotenv()
 
 ACCESS_KEY = os.environ['ACCESS_KEY']
 KEYWORD_FILE_PATH = os.environ['KEYWORD_FILE_PATH']
+SPEAK_COMMAND = os.environ['SPEAK_COMMAND']
 
 def main():
     try:
@@ -31,7 +32,7 @@ def main():
 
     wav_file = None
 
-    os.system(f"espeak 'ee Ready for action sir!'")
+    os.system(f"{SPEAK_COMMAND} 'Ready for action sir!'")
     print('Listening ... (press Ctrl+C to exit)')
 
     try:
