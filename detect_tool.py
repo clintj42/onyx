@@ -3,7 +3,7 @@ import ollama
 def detect_tool(command_text):
     refine_search_prompt = f"""You are a voice assistant similar to Alexa named Onyx. 
     Given a user command, tell me which tool is needed to complete the task. 
-    The tools are: no_tool_needed, play_spotify, shopping_list, smart_switch, current_datetime.
+    The tools are: no_tool_needed, play_spotify, shopping_list, smart_switch, current_datetime, set_timer
     If none of these are needed, return no_tool_needed.
     Return only the tool name. Do not add any additional Notes or Explanations.
 
@@ -21,6 +21,12 @@ def detect_tool(command_text):
     Output: smart_switch
     Example Input: What time is it?
     Output: current_datetime
+    Example Input: Set a timer for 2 minutes.
+    Output: set_timer
+    Example Input: Stop timer.
+    Output: no_tool_needed
+    Example Input: What is 2 plus 2?
+    Output: no_tool_needed
 
     Input: {command_text}"""
     detected_tool = ollama.generate(model='gemma2:2b', prompt=refine_search_prompt)

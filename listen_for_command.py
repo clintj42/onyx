@@ -5,6 +5,7 @@ import subprocess
 import re
 import os
 import dotenv
+from tools.play_spotify import control_spotify
 
 dotenv.load_dotenv()
 
@@ -25,13 +26,6 @@ def transcribe_gguf(whisper_cpp_path, model_path, file_path):
     output = output.strip()
 
     return output
-    
-def check_if_exit(transcription):
-    """
-    Check if the transcription is an exit command.
-    """
-    return any([x in transcription.lower() for x in ["stop", "exit", "quit"]])
-
 
 def check_if_ignore(transcription):
     """
@@ -60,6 +54,7 @@ def listen_for_command():
     recognizer = sr.Recognizer()
     while True:
         with sr.Microphone() as source:
+            control_spotify("stop")
             print("Awaiting query...")
             try:
                 audio = recognizer.listen(
@@ -81,15 +76,8 @@ def listen_for_command():
             if check_if_ignore(transcription):
                 continue
 
-            if check_if_exit(transcription):
-                os.system(f"{SPEAK_COMMAND} 'Program stopped. See you later!'")
-                # set message history to empty
-                # self.message_history = [self.message_history[0]]
-                return
-
-            else:
-                transcription = remove_parentheses(transcription)
-                return transcription
+            transcription = remove_parentheses(transcription)
+            return transcription
         
         except sr.UnknownValueError:
             print("Could not understand audio")

@@ -4,19 +4,37 @@ import emoji
 import os
 import asyncio
 from detect_tool import detect_tool
-from tools.play_spotify import play_spotify
+from tools.play_spotify import play_spotify, should_control_spotify, control_spotify
 from tools.shopping_list import shopping_list
 from tools.smart_switch import smart_switch
 from tools.current_datetime import current_datetime
+from tools.set_timer import set_timer, should_stop_timer, stop_timer
+from listen_for_command import listen_for_command
+from is_expecting_user_response import is_expecting_user_response
 
 dotenv.load_dotenv()
 
 SPEAK_COMMAND = os.getenv('SPEAK_COMMAND')
+conversation_enders = [
+    'stop',
+    'exit',
+    'quit',
+    'goodbye',
+    'bye',
+    'done',
+]
 
 def remove_emojis(text):
     return emoji.replace_emoji(text, replace='')
 
-def respond(message):
+def respond(message, conversation=[]):
+    if should_stop_timer(message):
+        stop_timer()
+        return
+    if should_control_spotify(message):
+        control_spotify(message)
+        return
+
     detected_tool = detect_tool(message).strip()
 
     print("Detected Tool: ", detected_tool)
@@ -33,6 +51,12 @@ def respond(message):
     if detected_tool == 'current_datetime':
         current_datetime(message)
         return
+    if detected_tool == 'set_timer':
+        set_timer(message)
+        return
+    
+    if any([message.lower().startswith(ender) for ender in conversation_enders]):
+        return
 
     prompt = f"""
         Act as a personal assistant named Onyx. Given a user command, respond with the appropriate action.
@@ -40,14 +64,22 @@ def respond(message):
 
         User command: {message}
     """
-    stream = ollama.chat(model='gemma2:2b', stream=True, options={
-        'num_predict': 100
-    }, messages=[
-    {
+
+    user_message = {
         'role': 'user',
         'content': prompt,
-    }])
-    dictate_ollama_stream(stream)
+    }
+
+    stream = ollama.chat(model='gemma2:2b', stream=True, options={
+        'num_predict': 100
+    }, messages=conversation + [user_message])
+    response = dictate_ollama_stream(stream)
+
+    if is_expecting_user_response(response):
+        os.system(f"play -v .1 sounds/notification.wav")
+        command = listen_for_command()
+        print("Command: ", command)
+        respond(command, conversation=conversation + [user_message, {'role': 'assistant', 'content': response}])
 
 def is_complete_word(text_chunk):
     """
@@ -64,7 +96,6 @@ def is_complete_sentence(text):
 def dictate_ollama_stream(stream):
     response = ""
     streaming_sentence = ""
-    is_first_chunk = True
     for i, chunk in enumerate(stream):
         text_chunk = chunk['message']['content']
         streaming_sentence += text_chunk
@@ -74,11 +105,7 @@ def dictate_ollama_stream(stream):
             cleaned_sentence = streaming_sentence.replace('"', "").replace("\n", ". ").replace("*", "").replace('-', '').replace(':', '')
             cleaned_sentence = remove_emojis(cleaned_sentence)
             print(cleaned_sentence)
-            if is_first_chunk:
-                is_first_chunk = False
-                os.system(f"{SPEAK_COMMAND} \"{cleaned_sentence}\"")
-            else:
-                os.system(f"{SPEAK_COMMAND} \"{cleaned_sentence}\"")
+            os.system(f"{SPEAK_COMMAND} \"{cleaned_sentence}\"")
             # wav = tts.tts(text=cleaned_sentence)
             # sd.play(wav, samplerate=tts.synthesizer.output_sample_rate)
             # sd.wait() 
