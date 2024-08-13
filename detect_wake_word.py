@@ -1,6 +1,7 @@
 import os
 import struct
 import dotenv
+import ollama
 from datetime import datetime
 from listen_for_command import listen_for_command
 from respond import respond
@@ -14,6 +15,10 @@ KEYWORD_FILE_PATH = os.environ['KEYWORD_FILE_PATH']
 SPEAK_COMMAND = os.environ['SPEAK_COMMAND']
 
 def main():
+    # Preload gemma2:2b model
+    print("Preloading gemma2:2b model")
+    ollama.chat(model='gemma2:2b', messages=[], keep_alive=-1)
+
     try:
         porcupine = pvporcupine.create(
             access_key=PORCUPINE_ACCESS_KEY,

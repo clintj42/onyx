@@ -2,8 +2,7 @@ from transformers import AutoTokenizer
 from transformers import AutoModelForSequenceClassification
 from numpy import exp, sum
 
-key_tools = ['take_picture', 'no_tool_needed',
-             'check_news', 'check_weather', 'play_spotify']
+key_tools = ['shopping_list', 'no_tool_needed', 'current_datetime', 'smart_switch', 'play_spotify', 'set_timer']
 
 
 TOOL_THRESHOLD = .95
@@ -23,8 +22,7 @@ def remove_any_non_alphanumeric_characters(text):
 
 def load_model():
     tokenizer = AutoTokenizer.from_pretrained("google-bert/bert-base-uncased")
-    model = AutoModelForSequenceClassification.from_pretrained(
-        "nkasmanoff/tool-bert")
+    model = AutoModelForSequenceClassification.from_pretrained("clintj42/tool-bert")
 
     model.eval()
     return model, tokenizer
@@ -50,8 +48,8 @@ if __name__ == "__main__":
 
     model, tokenizer = load_model()
 
-    questions = ["Who is the best captain in star trek", "tell me a joke",
-                 'take a photo', 'check the weather', 'play some music', 'please tell me a joke', 'What is the news', 'When did the US declare independence', 'What is the capital of France', 'What is the capital of the United States', 'What is the capital of the United States of America',]
+    questions = ["Add milk to the shopping list", "Who is the best captain in star trek", "tell me a joke", "Turn off the basement lights",
+                "Play blackbird on spotify", "What time is it", "What is your favorite color", "Set a timer for 20 minutes"]
     for question in questions:
 
         start = time.time()

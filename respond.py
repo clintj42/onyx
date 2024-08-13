@@ -10,9 +10,11 @@ from tools.smart_switch import smart_switch
 from tools.current_datetime import current_datetime
 from tools.set_timer import set_timer, should_stop_timer, stop_timer
 from listen_for_command import listen_for_command
-from is_expecting_user_response import is_expecting_user_response
+from bert import predict_tool, load_model
 
 dotenv.load_dotenv()
+
+model, tokenizer = load_model()
 
 SPEAK_COMMAND = os.getenv('SPEAK_COMMAND')
 conversation_enders = [
@@ -35,7 +37,7 @@ def respond(message, conversation=[]):
         control_spotify(message)
         return
 
-    detected_tool = detect_tool(message).strip()
+    detected_tool = predict_tool(message, model, tokenizer).strip()
 
     print("Detected Tool: ", detected_tool)
     
@@ -70,12 +72,12 @@ def respond(message, conversation=[]):
         'content': prompt,
     }
 
-    stream = ollama.chat(model='gemma2:2b', stream=True, options={
+    stream = ollama.chat(model='gemma2:2b', stream=True, keep_alive=-1, options={
         'num_predict': 100
     }, messages=conversation + [user_message])
     response = dictate_ollama_stream(stream)
 
-    if is_expecting_user_response(response):
+    if "?" in response:
         os.system(f"play -v .1 sounds/notification.wav")
         command = listen_for_command()
         print("Command: ", command)
