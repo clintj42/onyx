@@ -137,7 +137,7 @@ def control_spotify(command):
             break
         
         if not device_id:
-            os.system(f'{SPEAK_COMMAND} "No active device found."')
+            # os.system(f'{SPEAK_COMMAND} "No active device found."')
             return
         
         if command.lower() == "next" or command.lower() == "skip":

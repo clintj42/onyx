@@ -54,7 +54,7 @@ def listen_for_command():
     recognizer = sr.Recognizer()
     while True:
         with sr.Microphone() as source:
-            control_spotify("stop")
+            # control_spotify("stop")
             print("Awaiting query...")
             try:
                 audio = recognizer.listen(

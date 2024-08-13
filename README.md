@@ -12,6 +12,10 @@
 
 - `sudo apt-get install portaudio19-dev`
 - `sudo apt install sox`
+- `sudo apt-get install espeak`
+- `sudo apt install curl`
+- `curl -fsSL https://ollama.com/install.sh | sh`
+- `ollama run gemma2:2b`
 - Install rust `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
 - `source $HOME/.cargo/env`
 - `pip install -r requirements.txt`
