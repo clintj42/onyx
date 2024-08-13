@@ -9,14 +9,14 @@ from pvrecorder import PvRecorder
 
 dotenv.load_dotenv()
 
-ACCESS_KEY = os.environ['ACCESS_KEY']
+PORCUPINE_ACCESS_KEY = os.environ['PORCUPINE_ACCESS_KEY']
 KEYWORD_FILE_PATH = os.environ['KEYWORD_FILE_PATH']
 SPEAK_COMMAND = os.environ['SPEAK_COMMAND']
 
 def main():
     try:
         porcupine = pvporcupine.create(
-            access_key=ACCESS_KEY,
+            access_key=PORCUPINE_ACCESS_KEY,
             keyword_paths=[KEYWORD_FILE_PATH]
         )
     except pvporcupine.PorcupineError as e:
