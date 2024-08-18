@@ -3,10 +3,10 @@ from transformers import AutoModelForSequenceClassification
 from numpy import exp, sum
 
 key_tools = [
-    "no_tool_needed",
     "time_tool_action",
     "date_tool_action",
     "datetime_tool_action",
+    "no_tool_needed",
 ]
 
 
@@ -64,7 +64,7 @@ if __name__ == "__main__":
 
         start = time.time()
         print(f"Question: {question}")
-        print(f"Tool: {predict_tool(question, model, tokenizer)}")
+        print(f"Tool: {predict_datetime_tool(question, model, tokenizer)}")
         stop = time.time()
 
         print(f"Time taken: {stop-start}")
