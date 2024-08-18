@@ -10,3 +10,5 @@ soundfile==0.12.1
 SpeechRecognition==3.10.3
 spotipy==2.24.0
 todoist_api_python==2.1.6
+spacy==3.7.5
+numerizer==0.2.3
