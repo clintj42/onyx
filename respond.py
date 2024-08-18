@@ -3,14 +3,13 @@ import dotenv
 import emoji
 import os
 import asyncio
-from detect_tool import detect_tool
 from tools.play_spotify import play_spotify, should_control_spotify, control_spotify
 from tools.shopping_list import shopping_list
 from tools.smart_switch import smart_switch
 from tools.current_datetime import current_datetime
 from tools.set_timer import set_timer, should_stop_timer, stop_timer
 from listen_for_command import listen_for_command
-from bert import predict_tool, load_model
+from predict_tool import predict_tool, load_model
 
 dotenv.load_dotenv()
 
