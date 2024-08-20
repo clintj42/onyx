@@ -17,6 +17,7 @@ timer_thread = None
 
 timer_enders = [
     "stop",
+    "please stop",
     "cancel",
     "clear",
     "reset",

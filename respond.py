@@ -94,7 +94,6 @@ def respond(message, conversation=[]):
     response = dictate_ollama_stream(stream)
 
     if "?" in response:
-        os.system(f"play -v .1 sounds/notification.wav")
         command = listen_for_command()
         if command is not None:
             print("Command: ", command)

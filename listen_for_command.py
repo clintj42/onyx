@@ -73,7 +73,7 @@ def listen_for_command():
                     source, timeout=COMMAND_TIMEOUT, phrase_time_limit=PHRASE_TIME_LIMIT
                 )
             except sr.WaitTimeoutError:
-                break
+                continue
 
         try:
             with open(f"sounds/command.wav", "wb") as f:
@@ -84,7 +84,7 @@ def listen_for_command():
             transcription = transcribe_audio(file_path=f"sounds/command.wav")
 
             if check_if_ignore(transcription):
-                break
+                continue
 
             transcription = remove_parentheses(transcription)
             return transcription

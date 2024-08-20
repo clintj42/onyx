@@ -118,6 +118,11 @@ def should_control_spotify(command):
         device_id = None
 
         for device in devices["devices"]:
+            if device["id"] == SPOTIFY_DEVICE_ID:
+                device_id = device["id"]
+                break
+
+        for device in devices["devices"]:
             device_id = device["id"]
             break
 
@@ -142,13 +147,13 @@ def control_spotify(command):
             )
         )
 
-        # Get the current user's devices
         devices = sp.devices()
         device_id = None
 
         for device in devices["devices"]:
-            device_id = device["id"]
-            break
+            if device["id"] == SPOTIFY_DEVICE_ID:
+                device_id = device["id"]
+                break
 
         if not device_id:
             # os.system(f'{SPEAK_COMMAND} "No active device found."')
@@ -193,13 +198,13 @@ def set_volume_percentage(volume_percentage):
             )
         )
 
-        # Get the current user's devices
         devices = sp.devices()
         device_id = None
 
         for device in devices["devices"]:
-            device_id = device["id"]
-            break
+            if device["id"] == SPOTIFY_DEVICE_ID:
+                device_id = device["id"]
+                break
 
         if not device_id:
             return
