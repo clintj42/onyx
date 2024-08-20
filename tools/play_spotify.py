@@ -5,6 +5,7 @@ import traceback
 from dotenv import load_dotenv
 import os
 import json
+from extractors.spotify_extractor import spotify_extractor
 
 load_dotenv()
 
@@ -15,39 +16,13 @@ spotify_control_commands = [
     "stop",
     "pause",
     "play",
+    "continue",
     "previous",
     "repeat",
     "repeat off",
     "restart",
     "start over",
 ]
-
-
-def refine_search_query(search_query):
-    refine_search_prompt = f"""Given the input of a Spotify search query, return a json object in the following schema:
-    {{
-        "refined_query": "artist:artist_name track:track_name album:album_name",
-        "type: "artist,track,album"
-    }}
-
-    Example Input: Listen to Billy Joel on Spotify. 
-    Output: {{ "refined_query": "artist: Billy Joel", "type": "artist" }}
-    Example Input: Play the Track Halo by Beyonce on Spotify. 
-    Output: {{ "refined_query": "track:Halo artist:Beyonce", "type": "track,artist" }}
-    Example Input: Play Under the Bridge on Spotify
-    Output: {{ "refined_query": "track:Under the Bridge", "type": "track" }}
-    Example Input: Play the album Jupiter Nights by Jupiter Nights on Spotify
-    Output: {{ "refined_query": "artist:Jupiter Nights album:Jupiter Nights", "type": "artist,album" }}
-    Example Input: Listen to Come Together on the album Abbey Road by The Beatles on Spotify.
-    Output: {{ "refined_query": "track:Come Together album:Abbey Road artist:The Beatles", "type": "track,album,artist" }}
-
-    Respond only with the output. Do not add any additional Notes or Explanations. Correct any obvious spelling mistakes in the input.
-    Like Super trap should be corrected to Supertramp for instance.
-
-
-    Input: {search_query}"""
-    refined_search = ollama.generate(model="gemma2:2b", prompt=refine_search_prompt)
-    return refined_search["response"]
 
 
 def play_spotify(search_query):
@@ -61,19 +36,12 @@ def play_spotify(search_query):
             )
         )
 
-        refined_query_json = refine_search_query(search_query)
-        refined_query_json = (
-            refined_query_json.strip("```json").strip("`").replace('""', '"').strip()
-        )
+        spotify_query, query_type = spotify_extractor(search_query)
 
-        # Extract the refined query and type from the json
-        data = json.loads(refined_query_json)
-        refined_query = data["refined_query"]
-        type = data["type"]
-        print("Sending the following search to Spotify\n", refined_query, "\n", type)
+        print("Spotify query", spotify_query)
+        print("Query Type", query_type)
 
-        # Search by artist, album or track
-        result = sp.search(refined_query, limit=1, type=type)
+        result = sp.search(spotify_query, limit=1, type=query_type)
 
         context_uri = None
 
@@ -99,7 +67,6 @@ def play_spotify(search_query):
             artist = result["artists"]["items"][0]
             context_uri = artist["uri"]
 
-        # Get the current user's devices
         devices = sp.devices()
         device_id = None
 
@@ -113,7 +80,6 @@ def play_spotify(search_query):
             )
         else:
             if device_id:
-                # Start playback with the album URI, Spotify will continue with the album's songs
                 if "track" in context_uri:
                     sp.start_playback(device_id=device_id, uris=[context_uri])
                 elif "artist in context_uri":
@@ -184,7 +150,7 @@ def control_spotify(command):
         elif command.lower() == "stop" or command.lower() == "pause":
             if sp.current_playback()["is_playing"]:
                 sp.pause_playback(device_id=device_id)
-        elif command.lower() == "play":
+        elif command.lower() == "play" or command.lower() == "continue":
             sp.start_playback(device_id=device_id)
         elif command.lower() == "previous":
             sp.previous_track(device_id=device_id)
@@ -205,6 +171,70 @@ def control_spotify(command):
         os.system(
             f'{SPEAK_COMMAND} "An error occurred while trying to control the music."'
         )
+
+
+def temporarily_turn_down_volume():
+    try:
+        sp = spotipy.Spotify(
+            auth_manager=SpotifyOAuth(
+                client_id=os.getenv("SPOTIFY_CLIENT_ID"),
+                client_secret=os.getenv("SPOTIFY_CLIENT_SECRET"),
+                redirect_uri="http://google.com/callback/",
+                scope="user-read-playback-state,user-modify-playback-state,streaming",
+            )
+        )
+
+        # Get the current user's devices
+        devices = sp.devices()
+        device_id = None
+
+        for device in devices["devices"]:
+            device_id = device["id"]
+            break
+
+        if not device_id:
+            return
+        else:
+            current_volume = sp.current_playback()["device"]["volume_percent"]
+            new_volume = max(
+                0, current_volume - 80
+            )  # Reduce volume by 80%, but not below 0
+            sp.volume(new_volume, device_id=device_id)
+
+            return current_volume
+
+    except Exception as e:
+        print(e)
+        traceback.print_exc()
+
+
+def turn_volume_back_up(spotify_volume):
+    try:
+        sp = spotipy.Spotify(
+            auth_manager=SpotifyOAuth(
+                client_id=os.getenv("SPOTIFY_CLIENT_ID"),
+                client_secret=os.getenv("SPOTIFY_CLIENT_SECRET"),
+                redirect_uri="http://google.com/callback/",
+                scope="user-read-playback-state,user-modify-playback-state,streaming",
+            )
+        )
+
+        # Get the current user's devices
+        devices = sp.devices()
+        device_id = None
+
+        for device in devices["devices"]:
+            device_id = device["id"]
+            break
+
+        if not device_id:
+            return
+        else:
+            sp.volume(spotify_volume, device_id=device_id)
+
+    except Exception as e:
+        print(e)
+        traceback.print_exc()
 
 
 if __name__ == "__main__":

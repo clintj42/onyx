@@ -1,8 +1,5 @@
 import asyncio
-import ollama
 import os
-import json
-import traceback
 from kasa import Discover
 from dotenv import load_dotenv
 from extractors.smart_switch_extractor import smart_switch_extractor
@@ -24,28 +21,6 @@ kasa_devices = {
     "office lamp": "192.168.0.8",
 }
 
-# def command_request(command_text):
-#     prompt = f"""
-#     Given a user command return a json object in the following schema:
-#     {{
-#         "device_name": "device_name",
-#         "action": "on|off|none"
-#     }}
-
-#     Example Input: Turn on the office lamp.
-#     Output: {{ "device_name": "office lamp", "action": "on" }}
-#     Example Input: Turn off the living room tv
-#     Output: {{ "device_name": "living room tv", "action": "off" }}
-#     Example Input: Turn over the entire house
-#     Output: {{ "device_name": "entire house", "action": "none" }}
-
-#     Do not add any additional Notes or Explanations. Correct any obvious spelling mistakes in the input.
-
-#     User command: {command_text}
-#     """
-#     retrieved_smart_switch_command = ollama.generate(model='gemma2:2b', prompt=prompt)
-#     return retrieved_smart_switch_command['response']
-
 
 async def find_device_by_name(target_name):
     try:
@@ -61,21 +36,6 @@ async def find_device_by_name(target_name):
 
 
 async def smart_switch(command_text):
-    # command_request_str = command_request(command_text)
-    # command_request_str = command_request_str.replace('```json', '').replace('`', '').replace('""', '"').strip()
-
-    # try:
-    #     smart_switch_command_json = json.loads(command_request_str)
-    # except Exception as e:
-    #     print("Received: ", command_request_str)
-    #     print(e)
-    #     traceback.print_exc()
-    #     os.system(f'{SPEAK_COMMAND} "An error occurred while parsing the smart switch command."')
-    #     return
-
-    # device_name = smart_switch_command_json['device_name']
-    # action = smart_switch_command_json['action']
-
     action, device_name = smart_switch_extractor(command_text)
 
     print("Device Name: ", device_name)
