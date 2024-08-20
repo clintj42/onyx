@@ -51,8 +51,9 @@ def main():
                 print("[%s] Detected Onyx" % (str(datetime.now())))
                 command = listen_for_command()
                 print("Command: ", command)
-                respond(command)
-                set_volume_percentage(100)
+                if command is not None:
+                    respond(command)
+                    set_volume_percentage(100)
                 print("Listening ... (press Ctrl+C to exit)")
     except KeyboardInterrupt:
         print("Stopping ...")
