@@ -19,6 +19,7 @@ model, tokenizer = load_model()
 SPEAK_COMMAND = os.getenv("SPEAK_COMMAND")
 conversation_enders = [
     "stop",
+    "please stop",
     "exit",
     "quit",
     "goodbye",
