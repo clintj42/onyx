@@ -10,6 +10,8 @@ from extractors.spotify_extractor import spotify_extractor
 load_dotenv()
 
 SPEAK_COMMAND = os.getenv("SPEAK_COMMAND")
+SPOTIFY_DEVICE_ID = os.getenv("SPOTIFY_DEVICE_ID")
+
 spotify_control_commands = [
     "next",
     "skip",
@@ -71,8 +73,9 @@ def play_spotify(search_query):
         device_id = None
 
         for device in devices["devices"]:
-            device_id = device["id"]
-            break
+            if device["id"] == SPOTIFY_DEVICE_ID:
+                device_id = device["id"]
+                break
 
         if context_uri is None:
             os.system(
