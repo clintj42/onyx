@@ -77,19 +77,24 @@ def play_spotify(search_query):
                 device_id = device["id"]
                 break
 
+        if device_id is None:
+            os.system(
+                f'{SPEAK_COMMAND} "No active device found. Please open Spotify on your device and try again."'
+            )
+            return
+
         if context_uri is None:
             os.system(
                 f'{SPEAK_COMMAND} "Could not find any music for the following command: {search_query}"'
             )
         else:
-            if device_id:
-                set_volume_percentage(100)
-                if "track" in context_uri:
-                    sp.start_playback(device_id=device_id, uris=[context_uri])
-                elif "artist in context_uri":
-                    sp.start_playback(device_id=device_id, context_uri=context_uri)
-                elif "album" in context_uri:
-                    sp.start_playback(device_id=device_id, context_uri=context_uri)
+            set_volume_percentage(100)
+            if "track" in context_uri:
+                sp.start_playback(device_id=device_id, uris=[context_uri])
+            elif "artist in context_uri":
+                sp.start_playback(device_id=device_id, context_uri=context_uri)
+            elif "album" in context_uri:
+                sp.start_playback(device_id=device_id, context_uri=context_uri)
     except Exception as e:
         print(e)
         traceback.print_exc()
