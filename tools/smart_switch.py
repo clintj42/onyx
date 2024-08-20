@@ -84,7 +84,9 @@ async def smart_switch(command_text):
     device = await find_device_by_name(device_name)
 
     if device is None:
-        os.system(f'{SPEAK_COMMAND} "Could not find the device named {device_name}"')
+        os.system(
+            f'{SPEAK_COMMAND} "Could not find the device named {device_name}. Make sure your voice assistant is on the same network as the device."'
+        )
         return
 
     if action == "on":

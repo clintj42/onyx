@@ -129,26 +129,31 @@ def play_spotify(search_query):
 
 
 def should_control_spotify(command):
-    sp = spotipy.Spotify(
-        auth_manager=SpotifyOAuth(
-            client_id=os.getenv("SPOTIFY_CLIENT_ID"),
-            client_secret=os.getenv("SPOTIFY_CLIENT_SECRET"),
-            redirect_uri="http://google.com/callback/",
-            scope="user-read-playback-state,user-modify-playback-state,streaming",
+    try:
+        sp = spotipy.Spotify(
+            auth_manager=SpotifyOAuth(
+                client_id=os.getenv("SPOTIFY_CLIENT_ID"),
+                client_secret=os.getenv("SPOTIFY_CLIENT_SECRET"),
+                redirect_uri="http://google.com/callback/",
+                scope="user-read-playback-state,user-modify-playback-state,streaming",
+            )
         )
-    )
 
-    devices = sp.devices()
-    device_id = None
+        devices = sp.devices()
+        device_id = None
 
-    for device in devices["devices"]:
-        device_id = device["id"]
-        break
+        for device in devices["devices"]:
+            device_id = device["id"]
+            break
 
-    if not device_id:
+        if not device_id:
+            return False
+
+        return command.lower() in spotify_control_commands
+    except Exception as e:
+        print(e)
+        traceback.print_exc()
         return False
-
-    return command.lower() in spotify_control_commands
 
 
 def control_spotify(command):
