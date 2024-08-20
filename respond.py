@@ -96,12 +96,13 @@ def respond(message, conversation=[]):
     if "?" in response:
         os.system(f"play -v .1 sounds/notification.wav")
         command = listen_for_command()
-        print("Command: ", command)
-        respond(
-            command,
-            conversation=conversation
-            + [user_message, {"role": "assistant", "content": response}],
-        )
+        if command is not None:
+            print("Command: ", command)
+            respond(
+                command,
+                conversation=conversation
+                + [user_message, {"role": "assistant", "content": response}],
+            )
 
 
 def is_complete_word(text_chunk):
