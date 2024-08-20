@@ -33,6 +33,8 @@ def remove_emojis(text):
 
 
 def remove_non_alphanumeric(string):
+    if string is None:
+        return ""
     return re.sub(r"[^a-zA-Z0-9]", "", string)
 
 
