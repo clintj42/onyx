@@ -3,6 +3,7 @@ import dotenv
 import emoji
 import os
 import asyncio
+import re
 from tools.play_spotify import play_spotify, should_control_spotify, control_spotify
 from tools.shopping_list import shopping_list
 from tools.smart_switch import smart_switch
@@ -30,12 +31,17 @@ def remove_emojis(text):
     return emoji.replace_emoji(text, replace="")
 
 
+def remove_non_alphanumeric(string):
+    return re.sub(r"[^a-zA-Z0-9]", "", string)
+
+
 def respond(message, conversation=[]):
-    if should_stop_timer(message):
+    cleaned_message = remove_non_alphanumeric(message)
+    if should_stop_timer(cleaned_message):
         stop_timer()
         return
-    if should_control_spotify(message.replace(".", "")):
-        control_spotify(message.replace(".", ""))
+    if should_control_spotify(cleaned_message):
+        control_spotify(cleaned_message)
         return
 
     detected_tool = predict_tool(message, model, tokenizer).strip()

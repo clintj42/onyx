@@ -7,7 +7,7 @@ from listen_for_command import listen_for_command
 from respond import respond
 import pvporcupine
 from pvrecorder import PvRecorder
-from tools.play_spotify import turn_volume_back_up
+from tools.play_spotify import set_volume_percentage
 
 dotenv.load_dotenv()
 
@@ -49,11 +49,10 @@ def main():
 
             if result >= 0:
                 print("[%s] Detected Onyx" % (str(datetime.now())))
-                command, spotify_volume = listen_for_command()
+                command = listen_for_command()
                 print("Command: ", command)
                 respond(command)
-                if spotify_volume is not None and spotify_volume > 0:
-                    turn_volume_back_up(spotify_volume)
+                set_volume_percentage(100)
                 print("Listening ... (press Ctrl+C to exit)")
     except KeyboardInterrupt:
         print("Stopping ...")

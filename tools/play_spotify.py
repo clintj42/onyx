@@ -80,6 +80,7 @@ def play_spotify(search_query):
             )
         else:
             if device_id:
+                set_volume_percentage(100)
                 if "track" in context_uri:
                     sp.start_playback(device_id=device_id, uris=[context_uri])
                 elif "artist in context_uri":
@@ -173,7 +174,7 @@ def control_spotify(command):
         )
 
 
-def temporarily_turn_down_volume():
+def set_volume_percentage(volume_percentage):
     try:
         sp = spotipy.Spotify(
             auth_manager=SpotifyOAuth(
@@ -195,42 +196,7 @@ def temporarily_turn_down_volume():
         if not device_id:
             return
         else:
-            current_volume = sp.current_playback()["device"]["volume_percent"]
-            new_volume = max(
-                0, current_volume - 80
-            )  # Reduce volume by 80%, but not below 0
-            sp.volume(new_volume, device_id=device_id)
-
-            return current_volume
-
-    except Exception as e:
-        print(e)
-        traceback.print_exc()
-
-
-def turn_volume_back_up(spotify_volume):
-    try:
-        sp = spotipy.Spotify(
-            auth_manager=SpotifyOAuth(
-                client_id=os.getenv("SPOTIFY_CLIENT_ID"),
-                client_secret=os.getenv("SPOTIFY_CLIENT_SECRET"),
-                redirect_uri="http://google.com/callback/",
-                scope="user-read-playback-state,user-modify-playback-state,streaming",
-            )
-        )
-
-        # Get the current user's devices
-        devices = sp.devices()
-        device_id = None
-
-        for device in devices["devices"]:
-            device_id = device["id"]
-            break
-
-        if not device_id:
-            return
-        else:
-            sp.volume(spotify_volume, device_id=device_id)
+            sp.volume(volume_percentage, device_id=device_id)
 
     except Exception as e:
         print(e)

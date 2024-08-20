@@ -5,7 +5,7 @@ import subprocess
 import re
 import os
 import dotenv
-from tools.play_spotify import temporarily_turn_down_volume
+from tools.play_spotify import set_volume_percentage
 
 dotenv.load_dotenv()
 
@@ -65,7 +65,7 @@ def listen_for_command():
     recognizer = sr.Recognizer()
     while True:
         with sr.Microphone() as source:
-            spotify_volume = temporarily_turn_down_volume()
+            set_volume_percentage(40)
             os.system(f"play -v .1 sounds/notification.wav")
             print("Awaiting query...")
             try:
@@ -87,7 +87,7 @@ def listen_for_command():
                 continue
 
             transcription = remove_parentheses(transcription)
-            return transcription, spotify_volume
+            return transcription
 
         except sr.UnknownValueError:
             print("Could not understand audio")
