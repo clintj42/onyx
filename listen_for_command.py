@@ -48,7 +48,7 @@ def check_if_ignore(transcription):
 
 def remove_parentheses(transcription):
     """
-    Remove parentheses and their contents from the transcription.
+    Remove parentheses and their contents frof the transcription.
     """
     return re.sub(r"\(.*\)", "", transcription).strip()
 
@@ -65,8 +65,8 @@ def listen_for_command():
     recognizer = sr.Recognizer()
     while True:
         with sr.Microphone() as source:
-            set_volume_percentage(40)
-            os.system(f"play -v .1 sounds/notification.wav")
+            set_volume_percentage(10)
+            subprocess.run(["play", "-v", ".1", "sounds/notification.wav"])
             print("Awaiting query...")
             try:
                 audio = recognizer.listen(

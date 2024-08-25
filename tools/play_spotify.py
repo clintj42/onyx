@@ -70,6 +70,7 @@ def play_spotify(search_query):
             context_uri = artist["uri"]
 
         devices = sp.devices()
+        print(devices)
         device_id = None
 
         for device in devices["devices"]:
@@ -129,7 +130,8 @@ def should_control_spotify(command):
         if not device_id:
             return False
 
-        return command.lower() in spotify_control_commands
+        command = command.lower().replace("spotify", "").replace(".", "").strip()
+        return command in spotify_control_commands
     except Exception as e:
         print(e)
         traceback.print_exc()
@@ -156,8 +158,9 @@ def control_spotify(command):
                 break
 
         if not device_id:
-            # os.system(f'{SPEAK_COMMAND} "No active device found."')
             return
+            
+        command = command.lower().replace("spotify", "").replace(".", "").strip()
 
         if command.lower() == "next" or command.lower() == "skip":
             sp.next_track(device_id=device_id)

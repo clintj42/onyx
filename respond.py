@@ -35,7 +35,7 @@ def remove_emojis(text):
 def remove_non_alphanumeric(string):
     if string is None:
         return ""
-    return re.sub(r"[^a-zA-Z0-9]", "", string)
+    return re.sub(r"[^a-zA-Z0-9\s]", "", string)
 
 
 def respond(message, conversation=[]):
@@ -139,9 +139,6 @@ def dictate_ollama_stream(stream):
             cleaned_sentence = remove_emojis(cleaned_sentence)
             print(cleaned_sentence)
             os.system(f'{SPEAK_COMMAND} "{cleaned_sentence}"')
-            # wav = tts.tts(text=cleaned_sentence)
-            # sd.play(wav, samplerate=tts.synthesizer.output_sample_rate)
-            # sd.wait()
 
             streaming_sentence = ""
 
