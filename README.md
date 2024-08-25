@@ -1,5 +1,7 @@
 # Onyx
 
+### Raspberry Pi voice assistant powered by a local, open-source LLM
+
 # Introduction
 
 Onyx is a Raspberry Pi voice home assistant similar to Amazon Echo or Google Home device. The difference is that this project keeps your voice on the Raspberry Pi at all times. Your voice never leaves the device. A lot of people have complained about Amazon Echo or Google Home showing personalized ads for things you talk about in your home. This project aims to solve that problem. All models and text analyzing are loaded on the Raspberry Pi. The project can actually run just fine without even being connected to the internet. The only times it hits the internet, is if you ask it to. For example, if you say "Play a song on Spotify".
