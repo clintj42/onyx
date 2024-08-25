@@ -6,7 +6,7 @@ Onyx is a Raspberry Pi voice home assistant similar to Amazon Echo or Google Hom
 
 # Demo
 
-[Link to the demo](https://youtu.be/YCklC0LMPE4)
+[![Demo Video](https://img.youtube.com/vi/YCklC0LMPE4/0.jpg)](https://youtu.be/YCklC0LMPE4)
 
 # Set up:
 
